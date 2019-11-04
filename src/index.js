@@ -4,18 +4,18 @@ import { Route,Link, BrowserRouter as Router } from 'react-router-dom'
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
-import Home from './home';
+import App from './App';
 import Dashboard from './dashboard';
 import Products from './products';
 
 const routing = (<Router><div>
     <div>
-        <Route><Link to="/home">Home</Link></Route>
+        <Route><Link to="/">Home</Link></Route>
         <Route><Link to="/dashboard">Dashboard</Link></Route>
         <Route><Link to="/products">Products</Link></Route>   
     </div>
 
-    <Route path="/home" component={Home} />    
+    <Route exact path="/" component={App} />    
     <Route path="/dashboard" component={Dashboard} />
     <Route path="/products" component={Products} />
     
