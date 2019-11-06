@@ -44,30 +44,24 @@ class Products extends React.Component{
     render(){
         return (
             <form onSubmit={this.handleSubmit}>
-              <label>
-                Name:
+              <label>Name:</label>
                 <input type="text" name="productname" value={this.state.namevalue} onChange={this.handleChange} />
-              </label>
-              <label>
-                Category:
+              
+              <label>Category:</label>
                 <input type="text" name="categoryname" value={this.state.categoryvalue} onChange={this.handleChange} />
-              </label>
-              <label>
-                Supplier Name:
+              
+              <label>Supplier Name:</label>
                 <input type="text" name="suppliername" value={this.state.suppliervalue} onChange={this.handleChange} />
-              </label>
-              <label>
-                Cost Price:
+              
+              <label>Cost Price:</label>
                 <input type="text" name="costpricename" value={this.state.costpricevalue} onChange={this.handleChange} />
-              </label>
-              <label>
-                Price:
+              
+              <label>Price:</label>
                 <input type="text" name="pricename" value={this.state.pricevalue} onChange={this.handleChange} />
-              </label>
-              <label>
-                Unit:
+              
+              <label>Unit:</label>
                 <input type="text" name="unitname" value={this.state.unitvalue} onChange={this.handleChange} />
-              </label>
+              
               <input type="submit" value="Submit" />
             </form>
           );
