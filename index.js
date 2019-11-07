@@ -1,6 +1,8 @@
 var express = require('express');
 var mysql = require('mysql');
 var app = express();
+const path = require("path");
+const multer = require("multer");
 const port = 3001
 
 // Code to enable CORS
@@ -17,10 +19,8 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-app.use(bodyParser.json());
- app.use(bodyParser.urlencoded({
-     extended: true
- }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
  module.exports = app;
 
@@ -34,7 +34,6 @@ app.use(bodyParser.json());
 
 // Connect to Database
 dbConn.connect(); 
-
 
 app.get('/listproducts', function (req, res) {
     //console.log('in list products');    
@@ -50,6 +49,19 @@ app.get('/listproducts', function (req, res) {
 
 });
 
+const storage = multer.diskStorage({
+    destination: "./public/uploads/",
+    filename: function(req, file, cb){
+       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+    }
+       
+ });
+
+const upload = multer({
+    storage: storage,
+    limits:{fileSize: 1000000},
+ }).single("myImage");
+
 // Adding New Products in inventory system  
 app.post('/createproduct', function (req, res) {
     let productnameval = req.body.productname;
@@ -58,15 +70,24 @@ app.post('/createproduct', function (req, res) {
     let cost_priceval = req.body.costpricename;
     let priceval = req.body.pricename;
     let unitval = req.body.unitname;
-
-    console.log(supplierval);
-
+    
     var createproductsql = "INSERT INTO products (name,category,supplier_name,cost_price,price,unit) VALUES ('"+productnameval+"','"+categoryval+"','"+supplierval+"','"+cost_priceval+"','"+priceval+"','"+unitval+"')";
-
-    console.log(createproductsql);
 
     dbConn.query(createproductsql, function (err, result) {
         if (err) throw err;
         console.log("product created");
-    });
+    });    
+});
+
+app.post('/upload', function (req, res) {
+    console.log('in upload function');
+
+    upload(req, res, (err) => {
+        console.log("Request ---", req.body);
+        console.log("Request file ---", req.file);//Here you get file.
+        /*Now do where ever you want to do*/
+        if(!err)
+           return res.sendStatus(200).end();
+     });
+
 });
