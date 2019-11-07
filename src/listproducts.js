@@ -34,6 +34,7 @@ class ListProducts extends React.Component{
                         <th>Product Cost Price</th>
                         <th>Product Price</th>
                         <th>Product Unit</th>
+                        <th>Product Image</th>
                     </tr>   
                     {this.state.response.data.map((item,i)=>
                     <tr id={i}>                
@@ -44,6 +45,7 @@ class ListProducts extends React.Component{
                         <td style={{textAlign:'center'}}>{item.cost_price}</td>
                         <td style={{textAlign:'center'}}>{item.price}</td>
                         <td style={{textAlign:'center'}}>{item.unit}</td>
+                        <td style={{textAlign:'center'}}><img style={{height:'30px',width:'30px'}} src={item.image_path}/></td>
                     </tr>
                     )}
 
