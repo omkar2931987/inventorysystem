@@ -3,7 +3,7 @@ var mysql = require('mysql');
 var app = express();
 const path = require("path");
 const multer = require("multer");
-const port = 3001
+const port = 3001 
 
 // Code to enable CORS
 
@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
  module.exports = app;
 
- // Database connection configurations
+ // Database connection configuration
  var dbConn = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -49,6 +49,58 @@ app.get('/listproducts', function (req, res) {
 
 });
 
+
+
+// Adding New Products in inventory system  
+app.post('/createproduct', function (req, res) {
+    let productnameval = req.body.productname;
+    let categoryval = req.body.categoryname;
+    let supplierval = req.body.suppliername;
+    let cost_priceval = req.body.costpricename;
+    let priceval = req.body.pricename;
+    let unitval = req.body.unitname;
+    let resdata = '';
+    
+    var createproductsql = "INSERT INTO products (name,category,supplier_name,cost_price,price,unit) VALUES ('"+productnameval+"','"+categoryval+"','"+supplierval+"','"+cost_priceval+"','"+priceval+"','"+unitval+"')";
+
+    dbConn.query(createproductsql, function (err, result) {
+        if (err) throw err;
+        console.log("product created");
+        //console.log(result.insertId);
+        return res.json({ lastinsertid: result.insertId })       
+    });
+    
+});
+
+app.post('/upload', function (req, res) {
+    console.log('in upload function');
+
+    upload(req, res, (err) => {
+        console.log("Request ---", req.body);
+        console.log("Request file ---", req.file);//Here you get file.
+        console.log("Last Insert Id ---", req.body.lastinsertid);
+        /*Now do where ever you want to do*/
+        
+            
+            let imageuploadpath = '/uploads/'+req.file.filename;
+
+           let updateproductsql = "UPDATE products SET image_path='"+imageuploadpath+"' where id="+req.body.lastinsertid;
+
+           console.log(updateproductsql);
+
+           
+           dbConn.query(updateproductsql, function (err, result) {
+               if (err) throw err;
+               console.log("Table Row Updated with Image Path");
+                  
+           });
+           
+          if(!err)
+          return res.sendStatus(200).end();
+     });
+
+});
+
 const storage = multer.diskStorage({
     destination: "./public/uploads/",
     filename: function(req, file, cb){
@@ -61,33 +113,3 @@ const upload = multer({
     storage: storage,
     limits:{fileSize: 1000000},
  }).single("myImage");
-
-// Adding New Products in inventory system  
-app.post('/createproduct', function (req, res) {
-    let productnameval = req.body.productname;
-    let categoryval = req.body.categoryname;
-    let supplierval = req.body.suppliername;
-    let cost_priceval = req.body.costpricename;
-    let priceval = req.body.pricename;
-    let unitval = req.body.unitname;
-    
-    var createproductsql = "INSERT INTO products (name,category,supplier_name,cost_price,price,unit) VALUES ('"+productnameval+"','"+categoryval+"','"+supplierval+"','"+cost_priceval+"','"+priceval+"','"+unitval+"')";
-
-    dbConn.query(createproductsql, function (err, result) {
-        if (err) throw err;
-        console.log("product created");
-    });    
-});
-
-app.post('/upload', function (req, res) {
-    console.log('in upload function');
-
-    upload(req, res, (err) => {
-        console.log("Request ---", req.body);
-        console.log("Request file ---", req.file);//Here you get file.
-        /*Now do where ever you want to do*/
-        if(!err)
-           return res.sendStatus(200).end();
-     });
-
-});

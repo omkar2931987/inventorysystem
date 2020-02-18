@@ -5,7 +5,16 @@ class Products extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {productname: '',categoryname:'', suppliername:'', costpricename:'', pricename:"",unitname:"",file: null};
+        this.state = {
+          productname: '',
+          categoryname:'',
+          suppliername:'', 
+          costpricename:'', 
+          pricename:"",
+          unitname:"",
+          file: null,
+          response:''          
+        };
     
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -23,6 +32,8 @@ class Products extends React.Component{
       handleSubmit(event) {
         event.preventDefault();
 
+        
+
         //console.log(this.state);
 
         const { productname, categoryname, suppliername, costpricename, pricename, unitname, file } = this.state;
@@ -35,31 +46,57 @@ class Products extends React.Component{
             pricename,
             unitname            
         };
-        
+    
+    
     axios
       .post('http://localhost:3001/createproduct',productdata)
-      .then(() => console.log('Product Created'))
+      .then(res => {
+        this.setState({response:res.data});
+        console.log('Product Created --');
+        
+      
+        const formData = new FormData();
+   
+        //console.log(formData);
+     
+       formData.append('myImage',this.state.file);
+  
+       const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+      };
+  
+      console.log(this.state.response.lastinsertid);
+          
+      let lastinsertid = this.state.response.lastinsertid;
+  
+      
+      console.log('lastinsertid-->'+lastinsertid);
+      formData.append('lastinsertid',this.state.response.lastinsertid);
+  
+      axios.post("http://localhost:3001/upload",formData,config,lastinsertid)
+        .then((response) => {
+            console.log("The file is successfully uploaded");
+        }).catch((error) => {
+      });
+      
+      
+      
+      
+      
+      
+      })
       .catch(err => {
         console.error(err);
       });
-
-    const formData = new FormData();
-   
-      //console.log(formData);
-   
-     formData.append('myImage',this.state.file);
-
-     const config = {
-      headers: {
-          'content-type': 'multipart/form-data'
-      }
-    };
     
-    axios.post("http://localhost:3001/upload",formData,config)
-      .then((response) => {
-          alert("The file is successfully uploaded");
-      }).catch((error) => {
-    });
+    
+    
+     
+    
+
+    
     
     } // End of Submit Function
 
