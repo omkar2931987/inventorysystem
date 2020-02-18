@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
  module.exports = app;
 
- // Database connection configurations
+ // Database connection configuration
  var dbConn = mysql.createConnection({
     host: 'localhost',
     user: 'root',
